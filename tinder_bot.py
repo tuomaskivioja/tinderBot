@@ -10,7 +10,7 @@ class TinderBot():
     def open_tinder(self):
         self.driver.get('https://tinder.com')
 
-        sleep(2)
+        sleep(5)
 
         login = self.driver.find_element('xpath', '/html/body/div[1]/div/div[1]/div/main/div[1]/div/div/div/div/header/div/div[2]/div[2]/a/div[2]/div[2]')
         login.click()
