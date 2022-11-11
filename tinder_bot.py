@@ -1,6 +1,10 @@
 from selenium import webdriver
+# import undetected_chromedriver as uc
 from time import sleep
 from selenium.webdriver.common.keys import Keys
+# from selenium.webdriver.common.by import By
+# from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 from login_details import email, password
 
@@ -15,7 +19,8 @@ class TinderBot():
         login = self.driver.find_element('xpath', '/html/body/div[1]/div/div[1]/div/main/div[1]/div/div/div/div/header/div/div[2]/div[2]/a/div[2]/div[2]')
         login.click()
         sleep(1)
-        self.facebook_login()
+        # self.facebook_login()
+        self.google_login()
 
         sleep(6)
         try:
@@ -30,10 +35,12 @@ class TinderBot():
         except:
             print('no notification popup')
     
-    def facebook_login(self):
+    def google_login(self):
         # find and click FB login button
-        login_with_facebook = self.driver.find_element('xpath', '/html/body/div[2]/main/div/div[1]/div/div/div[3]/span/div[2]/button')
-        login_with_facebook.click()
+        # login_with_facebook = self.driver.find_element('xpath', '/html/body/div[2]/main/div/div[1]/div/div/div[3]/span/div[2]/button')
+        # login_with_facebook.click()
+        login_with_google = self.driver.find_element('xpath', '/html/body/div[2]/div/div/div[1]/div/div[3]/span/div[1]/div/button')
+        login_with_google.click()
 
         
         # save references to main and FB windows
