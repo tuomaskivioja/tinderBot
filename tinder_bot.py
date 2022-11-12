@@ -1,69 +1,74 @@
-from selenium import webdriver
-# import undetected_chromedriver as uc
-from time import sleep
+import undetected_chromedriver as uc
+# from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-# from selenium.webdriver.common.by import By
-# from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from time import sleep
+import random
 
 from login_details import email, password
 
 class TinderBot():
     def __init__(self):
-        self.driver = webdriver.Chrome()
+        # self.driver = webdriver.Chrome()
+        self.driver = uc.Chrome(use_subprocess=True)
     def open_tinder(self):
-        self.driver.get('https://tinder.com')
+        sleep(90)
+        wait = WebDriverWait(self.driver, 20)
+        url = 'https://accounts.google.com/ServiceLogin?service=accountsettings&continue=https://myaccount.google.com%3Futm_source%3Daccount-marketing-page%26utm_medium%3Dgo-to-account-button'
+        self.driver.get(url)
 
-        sleep(5)
+        wait.until(EC.visibility_of_element_located((By.NAME, 'identifier'))).send_keys(email)
+        sleep(8)
+        wait.until(EC.visibility_of_element_located((By.NAME, 'Passwd'))).send_keys(password)
+        sleep(600)
+        print("Logged into Google: Going into Tinder...")
+        self.driver.get('https://tinder.onelink.me/9K8a/3d4abb81')
+        sleep(10)
+        loginElement = wait.until(EC.visibility_of_element_located((By.XPATH, '/html/body/div[2]/main/div/div[1]/div/div/div[3]/span/div[1]')))
+        print("loginElement is set. it is:")
+        print(loginElement)
+        sleep(3)
+        wait.until(EC.visibility_of_element_located((By.XPATH, '/html/body/div[2]/main/div/div[1]/div/div/div[3]/span/div[1]'))).click()
+        # wait.until(EC.visibility_of_element_located((By.XPATH, '/html/body/div[2]/main/div/div[1]/div/div/div[3]/span/div[1]'))).send_keys(Keys.TAB + Keys.TAB + Keys.RETURN + Keys.RETURN + Keys.RETURN)
+        sleep(20)
+        # wait.until(EC.visibility_of_element_located((By.XPATH, '/html/body/div[2]/main/div/div[1]/div/div/div[3]/span/div[1]'))).send_keys(Keys.RETURN + Keys.RETURN + Keys.RETURN)
 
-        login = self.driver.find_element('xpath', '/html/body/div[1]/div/div[1]/div/main/div[1]/div/div/div/div/header/div/div[2]/div[2]/a/div[2]/div[2]')
-        login.click()
-        sleep(1)
-        # self.facebook_login()
-        self.google_login()
-
-        sleep(6)
         try:
-            allow_location_button = self.driver.find_element('xpath', '//*[@id="t-1917074667"]/main/div/div/div/div[3]/button[1]')
+            base_window = self.driver.window_handles[0]
+            google_popup_window = self.driver.window_handles[1]
+            # switch to Google window
+            self.driver.switch_to.window(google_popup_window)
+            wait.until(EC.visibility_of_element_located((By.XPATH, '/html/body/div/div[1]/div/div/main/div/div/div[1]/div[1]/div[1]'))).click()
+            self.driver.switch_to.window(base_window)
+        except:
+            print('no window popup')
+
+        print("Successfully logged into Tinder!")
+        sleep(30)
+        
+        try:
+            # allow_location_button = self.driver.find_element('xpath', '//*[@id="t-1917074667"]/main/div/div/div/div[3]/button[1]')
+            allow_location_button = wait.until(EC.visibility_of_element_located((By.XPATH,  '/html/body/div[2]/main/div/div/div/div[3]/button[1]')))
             allow_location_button.click()
         except:
             print('no location popup')
 
+        sleep(15)
+
         try:
-            notifications_button = self.driver.find_element('xpath', '/html/body/div[2]/main/div/div/div/div[3]/button[2]')
+            notifications_button = self.driver.find_element('xpath', '/html/body/div[2]/main/div/div/div/div[3]/button[1]')
             notifications_button.click()
         except:
             print('no notification popup')
-    
-    def google_login(self):
-        # find and click FB login button
-        # login_with_facebook = self.driver.find_element('xpath', '/html/body/div[2]/main/div/div[1]/div/div/div[3]/span/div[2]/button')
-        # login_with_facebook.click()
-        login_with_google = self.driver.find_element('xpath', '/html/body/div[2]/div/div/div[1]/div/div[3]/span/div[1]/div/button')
-        login_with_google.click()
 
-        
-        # save references to main and FB windows
-        sleep(2)
-        base_window = self.driver.window_handles[0]
-        fb_popup_window = self.driver.window_handles[1]
-        # switch to FB window
-        self.driver.switch_to.window(fb_popup_window)
 
-        # find enter email, password, login
-        cookies_accept_button = self.driver.find_element('xpath', '/html/body/div[2]/div[2]/div/div/div/div/div[3]/button[1]')
-        cookies_accept_button.click()
-
-        # login to FB
-
-        email_field = self.driver.find_element('xpath', '/html/body/div/div[2]/div[1]/form/div/div[1]/div/input')
-        pw_field = self.driver.find_element('xpath', '/html/body/div/div[2]/div[1]/form/div/div[2]/div/input')
-        login_button = self.driver.find_element('xpath', '/html/body/div/div[2]/div[1]/form/div/div[3]/label[2]/input')
-        # enter email, password and login
-        email_field.send_keys(email)
-        pw_field.send_keys(password)
-        login_button.click()
-        self.driver.switch_to.window(base_window)
+        try:
+            dismiss_darkMode_button = self.driver.find_element('xpath', '/html/body/div[2]/main/div/div[2]/button')
+            dismiss_darkMode_button.click()
+        except:
+            print('dark mode popup did not happen')
 
     def right_swipe(self):
         doc = self.driver.find_element('xpath', '//*[@id="Tinder"]/body')
@@ -75,10 +80,16 @@ class TinderBot():
     def auto_swipe(self):
         while True:
             sleep(2)
-            try:
-                self.right_swipe()
-            except:
-                self.close_match()
+            if self.driver.find_element('id', 's1903812341'):
+                print("Out of Likes")
+                break
+            else:
+                try:
+                    self.right_swipe()
+                except:
+                    self.close_match()
+
+                # div id=s1903812341 for out of likes
 
     def close_match(self):
         match_popup = self.driver.find_element('xpath', '//*[@id="modal-manager-canvas"]/div/div/div[1]/div/div[3]/a')
@@ -95,20 +106,25 @@ class TinderBot():
 
     def send_messages_to_matches(self):
         links = self.get_matches()
+        message_list = ["Hi", "Hey what's up?", "Hey :)", "How's it going?"]
         for link in links:
-            self.send_message(link)
+            print("Original list is : " + str(message_list))
+            rand_idx = random.randrange(len(message_list))
+            random_message = message_list[rand_idx]
+            print("First message is: " + str(random_message))
+            self.send_message(link, random_message)
 
-    def send_message(self, link):
+    def send_message(self, link, random_message):
         self.driver.get(link)
-        sleep(2)
+        sleep(3)
         text_area = self.driver.find_element('xpath', '/html/body/div[1]/div/div[1]/div/main/div[1]/div/div/div/div[1]/div/div/div[3]/form/textarea')
 
-        text_area.send_keys('hi')
+        text_area.send_keys(random_message)
 
         text_area.send_keys(Keys.ENTER)
 
 bot = TinderBot()
 bot.open_tinder()
-sleep(10)
+sleep(30)
 bot.auto_swipe()
 bot.send_messages_to_matches()
