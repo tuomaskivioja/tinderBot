@@ -14,7 +14,7 @@ class TinderBot():
         # self.driver = webdriver.Chrome()
         self.driver = uc.Chrome(use_subprocess=True)
     def open_tinder(self):
-        sleep(90)
+        sleep(10)
         wait = WebDriverWait(self.driver, 20)
         url = 'https://accounts.google.com/ServiceLogin?service=accountsettings&continue=https://myaccount.google.com%3Futm_source%3Daccount-marketing-page%26utm_medium%3Dgo-to-account-button'
         self.driver.get(url)
@@ -80,8 +80,11 @@ class TinderBot():
     def auto_swipe(self):
         while True:
             sleep(2)
-            if self.driver.find_element('id', 's1903812341'):
-                print("Out of Likes")
+            if self.driver.find_element('xpath', '/html/body/div[2]/main/div'): # XPATH /html/body/div[2]/main/div/div[2]/div/button[2]/div
+                print("Out of Likes, messaging matches (if any)...")
+                bot.send_messages_to_matches()
+                sleep(5)
+                print("Exiting...")
                 break
             else:
                 try:
@@ -96,11 +99,14 @@ class TinderBot():
         match_popup.click()
 
     def get_matches(self):
+        print("Getting matches..")
         match_profiles = self.driver.find_elements('class name', 'matchListItem')
         message_links = []
         for profile in match_profiles:
             if profile.get_attribute('href') == 'https://tinder.com/app/my-likes' or profile.get_attribute('href') == 'https://tinder.com/app/likes-you':
                 continue
+            else:
+                print('no matches :(')
             message_links.append(profile.get_attribute('href'))
         return message_links
 
@@ -127,4 +133,4 @@ bot = TinderBot()
 bot.open_tinder()
 sleep(30)
 bot.auto_swipe()
-bot.send_messages_to_matches()
+# bot.send_messages_to_matches()
