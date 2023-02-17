@@ -5,8 +5,8 @@ from selenium.webdriver.common.keys import Keys
 from login_details import email, password
 
 class TinderBot():
-    def __init__(self):
-        self.driver = webdriver.Chrome()
+    def __init__(self, driver_path):
+        self.driver = webdriver.Chrome(executable_path=driver_path)
     def open_tinder(self):
         self.driver.get('https://tinder.com')
 
