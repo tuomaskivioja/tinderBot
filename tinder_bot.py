@@ -3,10 +3,13 @@ from time import sleep
 from selenium.webdriver.common.keys import Keys
 
 from login_details import email, password
-
+import os
 class TinderBot():
-    def __init__(self):
+    def __init__(self, driver_path):
+        self.driver_path = driver_path
+        os.environ['PATH'] = driver_path
         self.driver = webdriver.Chrome()
+
     def open_tinder(self):
         self.driver.get('https://tinder.com')
 
