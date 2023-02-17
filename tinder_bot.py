@@ -10,7 +10,7 @@ class TinderBot():
         self.driver_path = driver_path
 
         os.environ['PATH'] = driver_path
-        self.driver = webdriver.Chrome(executable_path=driver_path)
+        self.driver = webdriver.Chrome()
     def open_tinder(self):
         self.driver.get('https://tinder.com')
 
